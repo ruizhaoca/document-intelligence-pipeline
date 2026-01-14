@@ -1,0 +1,4 @@
+document_id,document_type,file_name,processing_timestamp,confidence_score,involved_parties,raw_text,invoice_number,invoice_date,client_name,vendor_name,total_amount,currency,subtotal,tax,line_items,payment_method
+98fa1a11-388e-440b-9dc5-6a068cb65860,invoice,cargo.pdf,2026-01-14 14:17:56.147241,0.9633333333333333,"[""Cargo Collective, Inc."", ""p.tchomakov@outlook.com""]",,2011981,2025-07-01,p.tchomakov@outlook.com,"Cargo Collective, Inc.",99.0,USD,99.0,0.0,[],American Express ...1004
+c2162c7a-e0af-464e-8190-acc292404571,invoice,uber.pdf,2026-01-14 14:18:45.083666,0.96,"[""Uber"", ""Pentcho""]",,,2025-06-17,Pentcho,Uber,64.46,CAD,34.08,14.433333333333332,[],Apple Pay Visa ****4043
+9530c3dd-616e-460a-9ec2-2258f39e0cce,invoice,wework.pdf,2026-01-14 14:19:34.293046,0.9633333333333333,"[""WeWork Canada LP ULC"", ""Compassdata"", ""Pentcho Tchomakov""]",,PXC7PUAWY2HY-1,2025-06-17,Pentcho Tchomakov,WeWork Canada LP ULC,36.75,CAD,35.0,1.75,[],null
