@@ -1,12 +1,9 @@
-# 📄 Document Intelligence Pipeline
-
-> **Ensemble-based Document Processing with Multi-LLM Orchestration**
-
-An intelligent document processing pipeline that leverages multiple Large Language Models (LLMs) in parallel for robust document classification and data extraction. Built with **LangGraph** for orchestration, the system uses OCR-enabled ingestion and ensemble voting to achieve high-accuracy results.
+# Document Intelligence Pipeline
 
 ---
+## Project Overview
 
-## 🎯 Project Overview
+An intelligent document processing pipeline that leverages **multiple Large Language Models (LLMs)** in parallel for robust document classification and data extraction. Built with **LangGraph** for orchestration, the system uses **OCR-enabled** ingestion and **ensemble voting** to achieve high-accuracy results.
 
 This pipeline automates the extraction of structured data from unstructured documents (invoices, contracts, emails, meeting minutes) by:
 
@@ -16,11 +13,8 @@ This pipeline automates the extraction of structured data from unstructured docu
 4. **Merging** results using intelligent voting and quality scoring
 5. **Exporting** validated data to JSON and CSV formats
 
-The system is designed for **production reliability** through redundancy—if one LLM provider fails or returns low-quality results, others compensate automatically.
-
 ---
-
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Category | Technologies |
 |----------|-------------|
@@ -32,8 +26,7 @@ The system is designed for **production reliability** through redundancy—if on
 | **Language** | Python 3.10+ |
 
 ---
-
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 document-intelligence-pipeline/
