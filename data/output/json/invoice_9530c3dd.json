@@ -1,0 +1,23 @@
+{
+  "document_id": "9530c3dd-616e-460a-9ec2-2258f39e0cce",
+  "document_type": "invoice",
+  "file_name": "wework.pdf",
+  "processing_timestamp": "2026-01-14 14:19:34.293046",
+  "confidence_score": 0.9633333333333333,
+  "involved_parties": [
+    "WeWork Canada LP ULC",
+    "Compassdata",
+    "Pentcho Tchomakov"
+  ],
+  "raw_text": null,
+  "invoice_number": "PXC7PUAWY2HY-1",
+  "invoice_date": "2025-06-17",
+  "client_name": "Pentcho Tchomakov",
+  "vendor_name": "WeWork Canada LP ULC",
+  "total_amount": 36.75,
+  "currency": "CAD",
+  "subtotal": 35.0,
+  "tax": 1.75,
+  "line_items": [],
+  "payment_method": "null"
+}

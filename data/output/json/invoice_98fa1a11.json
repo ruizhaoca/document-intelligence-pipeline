@@ -1,0 +1,22 @@
+{
+  "document_id": "98fa1a11-388e-440b-9dc5-6a068cb65860",
+  "document_type": "invoice",
+  "file_name": "cargo.pdf",
+  "processing_timestamp": "2026-01-14 14:17:56.147241",
+  "confidence_score": 0.9633333333333333,
+  "involved_parties": [
+    "Cargo Collective, Inc.",
+    "p.tchomakov@outlook.com"
+  ],
+  "raw_text": null,
+  "invoice_number": "2011981",
+  "invoice_date": "2025-07-01",
+  "client_name": "p.tchomakov@outlook.com",
+  "vendor_name": "Cargo Collective, Inc.",
+  "total_amount": 99.0,
+  "currency": "USD",
+  "subtotal": 99.0,
+  "tax": 0.0,
+  "line_items": [],
+  "payment_method": "American Express ...1004"
+}

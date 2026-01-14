@@ -1,0 +1,22 @@
+{
+  "document_id": "c2162c7a-e0af-464e-8190-acc292404571",
+  "document_type": "invoice",
+  "file_name": "uber.pdf",
+  "processing_timestamp": "2026-01-14 14:18:45.083666",
+  "confidence_score": 0.96,
+  "involved_parties": [
+    "Uber",
+    "Pentcho"
+  ],
+  "raw_text": null,
+  "invoice_number": null,
+  "invoice_date": "2025-06-17",
+  "client_name": "Pentcho",
+  "vendor_name": "Uber",
+  "total_amount": 64.46,
+  "currency": "CAD",
+  "subtotal": 34.08,
+  "tax": 14.433333333333332,
+  "line_items": [],
+  "payment_method": "Apple Pay Visa ****4043"
+}
