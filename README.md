@@ -14,66 +14,43 @@ This pipeline automates the extraction of structured data from unstructured docu
 5. **Exporting** validated data to JSON and CSV formats
 
 ---
-## Tech Stack
-
-| Category | Technologies |
-|----------|-------------|
-| **Orchestration** | LangGraph (StateGraph, Conditional Edges, Fan-out/Fan-in) |
-| **LLM Providers** | OpenAI GPT-4o, Google Gemini 2.5 Flash, Ollama (Qwen2.5:7b) |
-| **Document Processing** | pdfplumber, pdf2image, Tesseract OCR |
-| **Data Validation** | Pydantic v2 (BaseModel, Field validators) |
-| **Data Export** | Pandas, JSON |
-| **Language** | Python 3.10+ |
-
----
 ## Repository Structure
 
 ```
 document-intelligence-pipeline/
 │
-├── src/
-│   ├── ingestion.py      # PDF ingestion with OCR fallback
-│   ├── orchestrator.py   # LangGraph ensemble orchestration
-│   ├── schemas.py        # Pydantic data models
-│   └── export.py         # JSON/CSV export utilities
-│
 ├── data/
-│   ├── input/            # Source PDF documents
+│   ├── input/                # Source PDF documents
+│   │
 │   └── output/
-│       ├── json/         # Individual document JSONs
-│       └── master_data.csv
+│       ├── json/             # Individual document JSONs
+│       └── master_data.csv   # Flattened export
 │
-├── test.py               # End-to-end pipeline test
-└── README.md
+├── src/
+│   ├── __init__.py           # Package initializer
+│   ├── ingestion.py          # PDF ingestion with OCR fallback
+│   ├── orchestrator.py       # LangGraph ensemble orchestration
+│   ├── schemas.py            # Pydantic data models
+│   └── export.py             # JSON/CSV export utilities
+│
+├── test.py                   # End-to-end pipeline test
+└── README.md                  
 ```
 
-### Module Breakdown
-
-| File | Purpose |
-|------|---------|
-| `ingestion.py` | Handles PDF text extraction with automatic OCR when native extraction fails |
-| `orchestrator.py` | LangGraph-based ensemble orchestrator for parallel LLM inference |
-| `schemas.py` | Pydantic models for Invoice, Contract, Email, Meeting Minutes |
-| `export.py` | Exports structured documents to JSON files and flattened CSV |
-| `test.py` | Main entry point demonstrating the full pipeline |
-
 ---
-
-## 🔄 Pipeline Workflow (LangGraph Architecture)
+## Pipeline Workflow (LangGraph Architecture)
 
 The orchestration layer uses **LangGraph** to enable parallel execution across multiple LLM providers with automatic result aggregation.
 
-### High-Level Flow
-
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         DOCUMENT INTELLIGENCE PIPELINE                       │
+│                         DOCUMENT INTELLIGENCE PIPELINE                      │
 └─────────────────────────────────────────────────────────────────────────────┘
                                       │
                                       ▼
                     ┌─────────────────────────────────┐
-                    │     📥 DOCUMENT INGESTION       │
-                    │   ─────────────────────────────  │
+                    │        DOCUMENT INGESTION       │
+                    │  ─────────────────────────────  │
                     │   • PDF parsing (pdfplumber)    │
                     │   • OCR fallback (Tesseract)    │
                     │   • Metadata extraction         │
@@ -81,7 +58,7 @@ The orchestration layer uses **LangGraph** to enable parallel execution across m
                                       │
                                       ▼
                     ┌─────────────────────────────────┐
-                    │   🏷️ ENSEMBLE CLASSIFICATION    │
+                    │      ENSEMBLE CLASSIFICATION    │
                     │        (LangGraph Graph)        │
                     └─────────────────────────────────┘
                                       │
@@ -95,15 +72,15 @@ The orchestration layer uses **LangGraph** to enable parallel execution across m
               └───────────────────────┼───────────────────────┘
                                       ▼
                     ┌─────────────────────────────────┐
-                    │      🗳️ VOTING AGGREGATION      │
-                    │   ─────────────────────────────  │
+                    │         VOTING AGGREGATION      │
+                    │  ─────────────────────────────  │
                     │   • Majority vote on doc type   │
                     │   • Average confidence score    │
                     └─────────────────────────────────┘
                                       │
                                       ▼
                     ┌─────────────────────────────────┐
-                    │   📊 ENSEMBLE EXTRACTION        │
+                    │      ENSEMBLE EXTRACTION        │
                     │        (LangGraph Graph)        │
                     └─────────────────────────────────┘
                                       │
@@ -117,8 +94,8 @@ The orchestration layer uses **LangGraph** to enable parallel execution across m
               └───────────────────────┼───────────────────────┘
                                       ▼
                     ┌─────────────────────────────────┐
-                    │      🔀 FIELD MERGER            │
-                    │   ─────────────────────────────  │
+                    │         FIELD MERGER            │
+                    │  ─────────────────────────────  │
                     │   • Numeric: averaging          │
                     │   • Strings: majority vote      │
                     │   • Lists: union deduplication  │
@@ -126,8 +103,8 @@ The orchestration layer uses **LangGraph** to enable parallel execution across m
                                       │
                                       ▼
                     ┌─────────────────────────────────┐
-                    │      ✅ PYDANTIC VALIDATION     │
-                    │   ─────────────────────────────  │
+                    │         PYDANTIC VALIDATION     │
+                    │  ─────────────────────────────  │
                     │   • Schema enforcement          │
                     │   • Type coercion               │
                     │   • Confidence scoring          │
@@ -135,81 +112,15 @@ The orchestration layer uses **LangGraph** to enable parallel execution across m
                                       │
                                       ▼
                     ┌─────────────────────────────────┐
-                    │      📤 EXPORT                  │
-                    │   ─────────────────────────────  │
+                    │         EXPORT                  │
+                    │  ─────────────────────────────  │
                     │   • Individual JSON files       │
                     │   • Flattened master CSV        │
                     └─────────────────────────────────┘
 ```
 
-### LangGraph State Machines
-
-#### Classification Graph
-
-```
-                         ┌─────────┐
-                         │  START  │
-                         └────┬────┘
-                              │
-                    ┌─────────┴─────────┐
-                    │  classification   │
-                    │     _router       │
-                    │   (Fan-out)       │
-                    └─────────┬─────────┘
-                              │
-         ┌────────────────────┼────────────────────┐
-         │                    │                    │
-         ▼                    ▼                    ▼
-┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-│ classify_openai │  │ classify_gemini │  │ classify_ollama │
-└────────┬────────┘  └────────┬────────┘  └────────┬────────┘
-         │                    │                    │
-         └────────────────────┼────────────────────┘
-                              │
-                              ▼
-                         ┌─────────┐
-                         │   END   │
-                         │(Fan-in) │
-                         └─────────┘
-```
-
-#### Extraction Graph
-
-```
-                         ┌─────────┐
-                         │  START  │
-                         └────┬────┘
-                              │
-                    ┌─────────┴─────────┐
-                    │   extraction      │
-                    │     _router       │
-                    │   (Fan-out)       │
-                    └─────────┬─────────┘
-                              │
-         ┌────────────────────┼────────────────────┐
-         │                    │                    │
-         ▼                    ▼                    ▼
-┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-│ extract_openai  │  │ extract_gemini  │  │ extract_ollama  │
-└────────┬────────┘  └────────┬────────┘  └────────┬────────┘
-         │                    │                    │
-         └────────────────────┼────────────────────┘
-                              │
-                              ▼
-                    ┌─────────────────┐
-                    │   FieldMerger   │
-                    │   (Aggregator)  │
-                    └────────┬────────┘
-                              │
-                              ▼
-                         ┌─────────┐
-                         │   END   │
-                         └─────────┘
-```
-
 ---
-
-## 🔑 Key Technical Features
+## Key Technical Features
 
 ### 1. LangGraph Orchestration
 - **StateGraph** with typed state dictionaries (`TypedDict`)
@@ -242,78 +153,7 @@ The orchestration layer uses **LangGraph** to enable parallel execution across m
 - Factory pattern for polymorphic document creation
 
 ---
-
-## 📊 Supported Document Types
-
-| Type | Extracted Fields |
-|------|------------------|
-| **Invoice** | invoice_number, date, vendor, client, amounts, tax, line_items, payment_method |
-| **Contract** | contract_id, parties, value, effective/expiry dates, key_terms |
-| **Email** | sender, recipients, date, subject, key_points, attachments |
-| **Meeting Minutes** | date, title, attendees, agenda, decisions, action_items |
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-```bash
-# Install system dependencies (Ubuntu/Debian)
-sudo apt-get install tesseract-ocr poppler-utils
-
-# Install Python dependencies
-pip install langgraph openai google-generativeai pydantic pdfplumber pdf2image pytesseract pandas
-```
-
-### Environment Variables
-
-```bash
-export OPENAI_API_KEY="sk-..."
-export GEMINI_API_KEY="..."
-# Ollama runs locally on http://localhost:11434
-```
-
-### Run the Pipeline
-
-```bash
-# Place PDFs in data/input/
-python test.py
-```
-
----
-
-## 📈 Sample Output
-
-```
-================================================================================
-ADVANCED PIPELINE: ENSEMBLE EXTRACTION
-================================================================================
-
-Features:
-  - Parallel extraction from OpenAI + Gemini + Ollama
-  - Intelligent result merging with voting
-
-Step 3: ENSEMBLE CLASSIFICATION...
-   Processing: cargo.pdf
-   Result: invoice (95.0%) via openai, gemini, ollama
-
-Step 4: ENSEMBLE EXTRACTION...
-   Extracted via: openai, gemini, ollama
-   Fields extracted: 10
-      - invoice_number: 2011981
-      - vendor_name: Cargo Collective, Inc.
-      - total_amount: 99.0
-      - currency: USD
-
-PIPELINE COMPLETE!
-   - Documents processed: 3
-   - Ensemble average confidence: 94.2%
-```
-
----
-
-## 🏗️ Architecture Highlights
+## Architecture Highlights
 
 | Principle | Implementation |
 |-----------|----------------|
@@ -324,17 +164,6 @@ PIPELINE COMPLETE!
 | **Cost Optimization** | Local Ollama option for development/high-volume scenarios |
 
 ---
+## Team
 
-## 📜 License
-
-MIT License
-
----
-
-## 🤝 Contributing
-
-Contributions welcome! Areas of interest:
-- Additional LLM provider integrations (Anthropic Claude, Cohere)
-- New document type schemas
-- Streaming extraction for large documents
-- Web UI for document upload and results visualization
+Rui Zhao, Othmane Zizi, Florence Wang, Yasmine Zhao, Calvin Chun Fung Yip
